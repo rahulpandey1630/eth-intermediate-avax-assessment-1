@@ -62,7 +62,7 @@
 			},
 			{
 				"inputs": [],
-				"name": "tokenName",
+				"name": "tokenABB",
 				"outputs": [
 					{
 						"internalType": "string",
@@ -75,7 +75,7 @@
 			},
 			{
 				"inputs": [],
-				"name": "tokenNot",
+				"name": "tokenName",
 				"outputs": [
 					{
 						"internalType": "string",
@@ -128,11 +128,11 @@
 	},
 	"sources": {
 		"contracts/token.sol": {
-			"keccak256": "0x1eec4e1d6b9222c1130caff9aac5ff77483bd1328209e4b9e09529b7e5a4d839",
+			"keccak256": "0x05ae6f00371812088e10af7bf63737551ce09358a937f7121ed58af4f5b000c7",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://214fe7a72201d503bc9b5d1c3902d44a7eb96bde6a63fcf4a289c6c3cfa267e0",
-				"dweb:/ipfs/QmZwx3eKutSZD82iqmVHsV29mNzmnU4Kf8HFCiRpUavdiZ"
+				"bzz-raw://87757bf4eecf24cf299a6883b87ccc444dbb80bc603956f570a076a68ffd0122",
+				"dweb:/ipfs/QmP3tbaZBgrN87qBzdgrCQiP7L1qRLrXQvS5Bn6tUNGNNK"
 			]
 		}
 	},
