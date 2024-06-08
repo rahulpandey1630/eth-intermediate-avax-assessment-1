@@ -19,7 +19,7 @@ contract MyToken {
  
     // public variables here 
     string  public tokenName = "Recursive Coin"; 
-    string public tokenABB  = "RR"; 
+    string public tokenABB  = "RC"; 
     uint256 public totalSupply = 0; 
 
     // mapping variable here 
