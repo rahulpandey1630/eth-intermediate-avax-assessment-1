@@ -21,21 +21,19 @@ contract MyToken {
     string  public tokenName = "Recursive Coin"; 
     string public tokenNot  = "RR"; 
     uint256 public totalSupply = 0; 
- 
- 
- 
- 
+
     // mapping variable here 
         mapping (address => uint256) public accounts; 
  
     // mint function 
     function mintToken(address _address ,uint256 _value ) public { 
             totalSupply+=_value; 
-            accounts[_address] += _value; 
-             
+            accounts[_address] += _value;       
     } 
+
     // burn function 
         function burnToken(address _address ,uint256 _value ) public  { 
+            //  checks if the balance of the specified _address is greater than or equal to _value
             if(accounts[_address]>=_value){ 
  
             totalSupply -=_value; 
