@@ -94,7 +94,7 @@
 	},
 	"settings": {
 		"compilationTarget": {
-			"contracts/statements.sol": "ErrorHandlingDemo"
+			"contracts/statement.sol": "ErrorHandlingDemo"
 		},
 		"evmVersion": "paris",
 		"libraries": {},
@@ -108,7 +108,7 @@
 		"remappings": []
 	},
 	"sources": {
-		"contracts/statements.sol": {
+		"contracts/statement.sol": {
 			"keccak256": "0x036c87b8190ce5f34f87edb2431c0388080df415d76452df637e7c6b5aca4bce",
 			"license": "MIT",
 			"urls": [
