@@ -1,37 +1,47 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-contract ErrorHandlingDemo {
+contract SchoolGradingSystem {
+    address public teacher;
+    
+    struct Student {
+        uint studentId;
+        string name;
+        uint grade;
+        bool isRegistered;
+    }
 
-    //State variables
-    uint256 public storedNumber;
-    address public owner;
+    mapping(uint => Student) public students;
 
-    // Constructor to set the contract owner
+    modifier onlyTeacher() {
+        require(msg.sender == teacher, "Only teacher can perform this action.");
+        _;
+    }
+
     constructor() {
-        owner = msg.sender;
+        teacher = msg.sender; // Assign the contract deployer as the teacher
     }
 
-    // Function to set a number greater than 100 using require()
-    function setNumber(uint256 _number) public {
-        // Require that the number must be greater than 100
-        require(_number > 100, "Number must be greater than 100");
-        storedNumber = _number;
+    function addStudent(uint studentId, string memory name) public onlyTeacher {
+        require(!students[studentId].isRegistered, "Student already registered.");
+        students[studentId] = Student(studentId, name, 0, true);
     }
 
-    // Function to perform a safe multiplication using assert()
-    function safeMultiply(uint256 a, uint256 b) public pure returns (uint256) {
-        uint256 result = a * b;
-        // Assert that there is no overflow
-        assert(result / a == b);
-        return result;
+    function assignGrade(uint studentId, uint grade) public onlyTeacher {
+        require(students[studentId].isRegistered, "Student not registered.");
+        require(grade >= 0 && grade <= 100, "Grade must be between 0 and 100.");
+        students[studentId].grade = grade;
     }
 
-    //Function to check if the caller is the owner, using revert()
-    function onlyOwnerCanCall() public view {
-        // Check if the caller is the owner, if not revert the transaction
-        if (msg.sender != owner) {
-            revert("Caller is not the owner");
-        }
+    function getGrades(uint studentId) public view returns (uint) {
+        require(students[studentId].isRegistered, "Student not registered.");
+        return students[studentId].grade;
+    }
+
+    function updateGrade(uint studentId, uint newGrade) public onlyTeacher {
+        require(students[studentId].isRegistered, "Student not registered.");
+        require(newGrade >= 0 && newGrade <= 100, "Grade must be between 0 and 100.");
+        students[studentId].grade = newGrade;
+        assert(students[studentId].grade == newGrade); // Ensure grade is updated
     }
 }
