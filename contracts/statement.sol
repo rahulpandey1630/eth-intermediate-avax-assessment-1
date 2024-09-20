@@ -1,71 +1,95 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-// Define a contract named SchoolGradingSystem
-contract SchoolGradingSystem {
-    // Public variable to store the teacher's address
-    address public teacher;
-    
-    // Structure to represent a student
-    struct Student {
-        uint studentId;       // Student's ID
-        string name;          // Student's name
-        uint grade;           // Student's grade (0-100)
-        bool isRegistered;    // Boolean to check if the student is registered
+contract ArmyManagementSystem {
+    address public officer;
+
+    struct Soldier {
+        uint soldierId;
+        string name;
+        bool isAssigned; // Indicates if a soldier is currently on a mission
+        uint missionId; // The ID of the mission assigned to the soldier
     }
 
-    // Mapping from student ID to Student structure
-    mapping(uint => Student) public students;
-
-    // Modifier to allow only the teacher to perform certain actions
-    modifier onlyTeacher() {
-        // Use require to check if the function caller is the teacher
-        require(msg.sender == teacher, "Only teacher can perform this action.");
-        _; // Continue executing the function
+    struct Mission {
+        uint missionId;
+        string missionName;
+        bool isCompleted;
     }
 
-    // Constructor that sets the contract deployer as the teacher
+    mapping(uint => Soldier) public soldiers; // Soldier mapping by soldier ID
+    mapping(uint => Mission) public missions; // Mission mapping by mission ID
+
+    modifier onlyOfficer() {
+        // Ensure that only the officer (contract deployer) can perform certain actions
+        require(msg.sender == officer, "Only the officer can perform this action.");
+        _;
+    }
+
     constructor() {
-        teacher = msg.sender; // Store the deployer's address as the teacher
+        officer = msg.sender;  // Set the contract deployer as the officer
     }
 
-    // Function to add a student (can only be called by the teacher)
-    function addStudent(uint studentId, string memory name) public onlyTeacher {
-        // Use require to ensure the student is not already registered
-        require(!students[studentId].isRegistered, "Student already registered.");
-        // Add the student to the mapping with an initial grade of 0
-        students[studentId] = Student(studentId, name, 0, true);
+    // Function to register a new soldier (only officer can do this)
+    function registerSoldier(uint soldierId, string memory name) public onlyOfficer {
+        // Use require to ensure the soldier isn't already registered
+        require(!soldiers[soldierId].isAssigned, "Soldier is already registered.");
+        // Register the new soldier
+        soldiers[soldierId] = Soldier(soldierId, name, false, 0);
     }
 
-    // Function to assign a grade to a student (only teacher can call)
-    function assignGrade(uint studentId, uint grade) public onlyTeacher {
-        // Use require to ensure the student is registered
-        require(students[studentId].isRegistered, "Student not registered.");
-        // Use revert if the grade is not within the valid range (0-100)
-        if (grade < 0 || grade > 100) {
-            revert("Grade must be between 0 and 100.");
+    // Function to add a new mission (only officer can do this)
+    function addMission(uint missionId, string memory missionName) public onlyOfficer {
+        // Use require to ensure the mission doesn't already exist
+        require(!missions[missionId].isCompleted, "Mission already exists.");
+        // Add the mission
+        missions[missionId] = Mission(missionId, missionName, false);
+    }
+
+    // Assign a soldier to a mission (only officer can assign)
+    function assignMission(uint soldierId, uint missionId) public onlyOfficer {
+        Soldier storage soldier = soldiers[soldierId];
+        Mission storage mission = missions[missionId];
+        
+        // Ensure that the soldier is not already assigned to a mission
+        require(!soldier.isAssigned, "Soldier is already assigned to a mission.");
+        // Ensure that the mission exists and is not completed
+        require(!mission.isCompleted, "Mission is already completed.");
+
+        // Assign the mission to the soldier
+        soldier.isAssigned = true;
+        soldier.missionId = missionId;
+    }
+
+    // Soldier completes the mission
+    function completeMission(uint soldierId) public {
+        Soldier storage soldier = soldiers[soldierId];
+        Mission storage mission = missions[soldier.missionId];
+
+        // Ensure that the soldier is currently assigned to a mission
+        require(soldier.isAssigned, "Soldier is not assigned to any mission.");
+        
+        // If the mission is already completed, use revert
+        if (mission.isCompleted) {
+            revert("Mission has already been completed.");
         }
-        // Assign the grade to the student
-        students[studentId].grade = grade;
+
+        // Mark the mission as completed
+        mission.isCompleted = true;
+        soldier.isAssigned = false;
+
+        // Use assert to ensure that the soldier is no longer assigned to the mission
+        assert(soldier.isAssigned == false);
     }
 
-    // Function to get a student's grade (anyone can call)
-    function getGrades(uint studentId) public view returns (uint) {
-        // Use require to ensure the student is registered
-        require(students[studentId].isRegistered, "Student not registered.");
-        // Return the student's grade
-        return students[studentId].grade;
-    }
+    // View soldier's mission status
+    function viewMissionStatus(uint soldierId) public view returns (string memory) {
+        Soldier storage soldier = soldiers[soldierId];
+        Mission storage mission = missions[soldier.missionId];
 
-    // Function to update a student's grade (only teacher can call)
-    function updateGrade(uint studentId, uint newGrade) public onlyTeacher {
-        // Use require to ensure the student is registered
-        require(students[studentId].isRegistered, "Student not registered.");
-        // Use require to ensure the new grade is within the range 0-100
-        require(newGrade >= 0 && newGrade <= 100, "Grade must be between 0 and 100.");
-        // Update the student's grade
-        students[studentId].grade = newGrade;
-        // Use assert to ensure the grade has been updated correctly
-        assert(students[studentId].grade == newGrade);
+        // Ensure the soldier is assigned to a mission before viewing the status
+        require(soldier.isAssigned, "Soldier is not assigned to a mission.");
+        
+        return mission.isCompleted ? "Mission Completed" : "Mission In Progress";
     }
 }
